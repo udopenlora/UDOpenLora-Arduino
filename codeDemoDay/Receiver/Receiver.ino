@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 #include <UDOpenLora.h>
 
-HardwareSerial* debugSerial = &Serial;;
+HardwareSerial* debugSerial = &Serial;
 SoftwareSerial LoraSerial(10,9);// RX, TX
 UDOpenLora loraBoard(&LoraSerial);
 
