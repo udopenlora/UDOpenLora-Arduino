@@ -23,6 +23,8 @@ bool UDOpenLora::setIOPin(uint8_t M0_PIN, uint8_t M1_PIN, uint8_t AUX_PIN)
 
 bool UDOpenLora::LoraBegin(uint8_t ADDR_H, uint8_t ADDR_L, UART_FORMAT_TYPE UART_FORMAT, UART_BPS_TYPE UART_BPS, AIR_BPS_TYPE AIR_BPS, uint8_t chanel, uint8_t trsm_mode, uint8_t drive_mode, WEAK_UP_TIME_TYPE WEAK_UP_TIME, uint8_t enFWC, TSMT_PWR_TYPE power)
 {
+  WaitAUX_L();
+  WaitAUX_H();
   if(debugPort != NULL)
   { 
     this->debugPort->println("LoraBegin...");
@@ -72,6 +74,41 @@ bool UDOpenLora::join_lora_network_request(uint8_t chanel, char* nameOfDevice)
 bool UDOpenLora::ReadAUX()
 {
   return digitalRead(this->AUX_PIN);
+}
+
+
+RET_STATUS UDOpenLora::WaitAUX_L()
+{
+  RET_STATUS STATUS = RET_SUCCESS;
+  uint8_t cnt = 0;
+  uint8_t data_buf[100], data_len;
+  while((this->ReadAUX()==HIGH) && (cnt++<TIME_OUT_CNT))
+  {
+    if(debugPort != NULL)
+    { 
+      this->debugPort->print(".");
+    }
+    delay(25);
+  }
+  if(cnt==0)
+  {
+  }
+  else if(cnt>=TIME_OUT_CNT)
+  {
+    STATUS = RET_TIMEOUT;
+    if(debugPort != NULL)
+    { 
+      this->debugPort->println(" TimeOut");
+    }
+  }
+  else
+  {
+    if(debugPort != NULL)
+    { 
+      this->debugPort->println("");
+    }
+  }
+  return STATUS;
 }
 
 RET_STATUS UDOpenLora::WaitAUX_H()

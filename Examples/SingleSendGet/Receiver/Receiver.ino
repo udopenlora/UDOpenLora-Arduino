@@ -28,7 +28,7 @@ void setup()
   Serial.begin(9600);
   LoraSerial.begin(9600);  
   loraBoard.setDebugPort(debugSerial); 
-  pinMode(buttonPin, INPUT);  
+  pinMode(buttonPin, INPUT_PULLUP);  
   pinMode(buzzerPin, OUTPUT);  
   Serial.print("Configure Lora Module: ");
   loraBoard.setIOPin(M0_PIN, M1_PIN, AUX_PIN);

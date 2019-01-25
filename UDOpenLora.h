@@ -161,6 +161,7 @@ class UDOpenLora
     SoftwareSerial* LoraSerial;
     bool AUX_HL;
     bool ReadAUX();
+    RET_STATUS WaitAUX_L();
     RET_STATUS WaitAUX_H();
     bool chkModeSame(MODE_TYPE mode);
     void SwitchMode(MODE_TYPE mode);

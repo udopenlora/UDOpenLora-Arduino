@@ -15,13 +15,15 @@ byte destADDR_L = 0x35;
 byte SourceAddr_H, SourceAddr_L;
 char data_buf[128];
 uint8_t data_len;
-char Mess[128] = "Hello! I'm UDOpenLora Receiver";
+String Mess = "UDLR";
 
 #define buttonPin 2
 #define buzzerPin 6
 #define M0_PIN 7
 #define M1_PIN 8
 #define AUX_PIN 4
+#define ledDebug1 A1
+#define ledDebug2 A2
 
 void setup()
 {
@@ -30,6 +32,8 @@ void setup()
   loraBoard.setDebugPort(debugSerial); 
   pinMode(buttonPin, INPUT_PULLUP);  
   pinMode(buzzerPin, OUTPUT);  
+  pinMode(ledDebug1, OUTPUT);  
+  pinMode(ledDebug2, OUTPUT);  
   Serial.print("Configure Lora Module: ");
   loraBoard.setIOPin(M0_PIN, M1_PIN, AUX_PIN);
   if (loraBoard.LoraBegin(DeviceLoraAddr_H, DeviceLoraAddr_L, LoraChanel, lora_power))
@@ -37,25 +41,10 @@ void setup()
     Serial.println("Configure ERROR!");
   }
   Serial.println("Configure Lora Module DONE!");  
-  loraBoard.SendMessage(destADDR_H, destADDR_L, Mess);
 }
 
 void loop() 
 {   
-  if(isPressButton())
-  {
-    delay(50);
-    if(isPressButton())
-    {
-      while(isPressButton());
-      turnOnBuzzer();
-      loraBoard.SendMessage(destADDR_H, destADDR_L, Mess);
-    }
-  }
-  else
-  {
-    turnOffBuzzer();
-  }
   if(loraBoard.ReceiveMsg(&SourceAddr_H, &SourceAddr_L, data_buf, &data_len)==RET_SUCCESS) 
   {
     Serial.println();
@@ -65,14 +54,16 @@ void loop()
     Serial.print("Message length:");
     Serial.println(data_len);
     Serial.print("Receive Message:");
-    for(int i = 0; i < data_len; i++)
+    String mess = String(data_buf);    
+    Serial.println(mess);
+    if(mess == Mess)
     {
-      Serial.print(data_buf[i]);
+      Serial.println("mess == Mess");
+//      turnOnBuzzer();
+//      delay(500);
+//      turnOffBuzzer();
+      loraBoard.SendMessage(destADDR_H, destADDR_L, "MOK");
     }
-    Serial.println();
-    turnOnBuzzer();
-    delay(1000);
-    turnOffBuzzer();
   }   
 }
 
@@ -85,9 +76,11 @@ bool isPressButton()
 void turnOffBuzzer()
 {
   digitalWrite(buzzerPin, LOW);
+  digitalWrite(ledDebug1, LOW);
 }
 
 void turnOnBuzzer()
 {
   digitalWrite(buzzerPin, HIGH);
+  digitalWrite(ledDebug1, HIGH);
 }
