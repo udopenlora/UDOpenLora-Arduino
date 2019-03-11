@@ -36,6 +36,7 @@ void setup()
   pinMode(ledDebug2, OUTPUT);  
   Serial.print("Configure Lora Module: ");
   loraBoard.setIOPin(M0_PIN, M1_PIN, AUX_PIN);
+  delay(1000);
   if (loraBoard.LoraBegin(DeviceLoraAddr_H, DeviceLoraAddr_L, LoraChanel, lora_power))
   {    
     Serial.println("Configure ERROR!");
